@@ -6,7 +6,7 @@ oauth2client==4.1.2
 pycryptodome==3.6.4
 requests-toolbelt==0.7.1
 streamlit==1.39.0
-PyPDF2==3.1.0
+pypdf==5.1.0
 langchain==0.3.4
 langchain-community==0.3.3
 openai==1.52.1
