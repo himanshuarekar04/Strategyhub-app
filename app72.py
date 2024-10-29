@@ -1335,107 +1335,12 @@ def go_back():
         st.session_state.stage = "choose_action"
     st.rerun()
 
-# Custom CSS for premium look
-def load_css() -> str:
-    return """
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
-    
-    html, body, [class*="css"] {
-        font-family: 'Poppins', sans-serif;
-    }
-    
-    .stApp {
-        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-    }
-    
-    .main {
-        background-color: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(10px);
-        border-radius: 15px;
-        padding: 30px;
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    }
-    
-    .stButton>button {
-        background-color: #4CAF50;
-        color: white;
-        border-radius: 25px;
-        border: none;
-        padding: 12px 24px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }
-    
-    .stButton>button:hover {
-        background-color: #45a049;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        transform: translateY(-2px);
-    }
-    
-    .stTextInput>div>div>input, .stSelectbox>div>div>select {
-        background-color: rgba(255, 255, 255, 0.1);
-        color: white;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 10px;
-    }
-    
-    h1, h2, h3 {
-        color: #FFD700;
-    }
-    
-    .stAlert {
-        background-color: rgba(255, 255, 255, 0.1);
-        color: white;
-        border-radius: 10px;
-    }
-    </style>
-    """
-
-# Premium header component
-def premium_header():
-    st.markdown("""
-    <div style="background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%); padding: 30px; border-radius: 15px; margin-bottom: 30px; text-align: center;">
-        <h1 style="color: #FFD700; font-size: 48px; font-weight: 700; margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">STRATEGYHUB</h1>
-        <p style="color: rgba(255,255,255,0.9); font-size: 18px; margin: 10px 0 0 0;">Your AI-Powered Business Strategy Assistant</p>
-    </div>
-    """, unsafe_allow_html=True)
-
-# Function to create a premium-looking card
-def create_card(title: str, content: str, button_text: str = None, button_key: str = None) -> None:
-    st.markdown(f"""
-    <div style="background-color: rgba(255, 255, 255, 0.05); border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-        <h3 style="color: #FFD700; margin-bottom: 10px;">{title}</h3>
-        <p style="color: white; margin-bottom: 15px;">{content}</p>
-    </div>
-    """, unsafe_allow_html=True)
-    if button_text:
-        st.button(button_text, key=button_key)
-
-# Function to display follow-up questions
-def display_follow_up_questions(context: str) -> None:
-    st.subheader("Follow-up Questions")
-    user_question = st.text_input("Ask a follow-up question:", key=f"{context}_follow_up")
-    if st.button("Submit Question", key=f"{context}_submit"):
-        with st.spinner("Generating response..."):
-            # Implement your question answering logic here
-            response = f"This is a placeholder response for the question: {user_question}"
-            st.write(response)
-
-# Function to export content to PDF
-def export_to_pdf(content: str, title: str) -> bytes:
-    # Implement your PDF generation logic here
-    # For now, we'll just return a placeholder byte string
-    return b"PDF content here"
-
-# Main function
 def main():
-    st.set_page_config(layout="wide", page_title="STRATEGYHUB")
-    st.markdown(load_css(), unsafe_allow_html=True)
-    
-    premium_header()
+    st.set_page_config(layout="wide")
+    st.title("Welcome to STRATEGYHUB")
+    require_authentication()  # Ensure authentication
 
-    # Initialize session state
+    # Initialize all session state variables
     if 'stage' not in st.session_state:
         st.session_state.stage = "choose_action"
     if "answers" not in st.session_state:
@@ -1451,289 +1356,252 @@ def main():
     if "new_business_plan" not in st.session_state:
         st.session_state.new_business_plan = None
 
-    # Sidebar navigation
-    with st.sidebar:
-        selected = option_menu(
-            menu_title="Navigation",
-            options=["Home", "Market Research", "Business Analysis", "Plan Generation", "Scenario Planning"],
-            icons=["house", "search", "graph-up", "file-earmark-text", "diagram-3"],
-            menu_icon="cast",
-            default_index=0,
-            styles={
-                "container": {"padding": "5!important", "background-color": "rgba(255, 255, 255, 0.05)"},
-                "icon": {"color": "#FFD700", "font-size": "25px"}, 
-                "nav-link": {"font-size": "16px", "text-align": "left", "margin":"0px", "--hover-color": "#eee"},
-                "nav-link-selected": {"background-color": "#4CAF50"},
-            }
-        )
+    # Action selection stage
+    if st.session_state.stage == "choose_action":
+        st.subheader("Choose an Action")
+        action = st.radio("Select an action:", ["Analyze Existing Business", "Analyze Uploaded Business Plan", "Generate New Business Plan", "Market Research"])
 
-    if selected == "Home":
-        st.title("Welcome to STRATEGYHUB")
-        st.write("Choose an action to get started:")
-        
-        col1, col2, col3, col4 = st.columns(4)
-        with col1:
-            create_card("Analyze Existing Business", "Upload and analyze your current business plan.", "Start Analysis", "analyze_existing")
-        with col2:
-            create_card("Analyze Uploaded Business Plan", "Upload a business plan for in-depth analysis.", "Upload Plan", "analyze_uploaded")
-        with col3:
-            create_card("Generate New Business Plan", "Create a comprehensive new business plan.", "Create Plan", "generate_new")
-        with col4:
-            create_card("Market Research", "Conduct advanced market research.", "Start Research", "market_research")
+        if st.button("Proceed"):
+            if action == "Analyze Existing Business":
+                st.session_state.stage = "upload_pdf"
+                st.session_state.action = action
+            elif action == "Analyze Uploaded Business Plan":
+                st.session_state.stage = "upload_pdf"
+                st.session_state.action = action
+            elif action == "Generate New Business Plan":
+                st.session_state.stage = "new_business_plan"
+            elif action == "Market Research":
+                st.session_state.stage = "market_research"
+            st.rerun()
 
-        if st.session_state.get('show_action_buttons', True):
-            if st.button("Proceed", key="home_proceed"):
-                if st.session_state.get('selected_action'):
-                    st.session_state.stage = st.session_state.selected_action
-                    st.rerun()
-                else:
-                    st.warning("Please select an action before proceeding.")
-
-    elif selected == "Market Research":
-        market_research_ui()
-
-    elif selected == "Business Analysis":
-        if st.session_state.stage == "upload_pdf":
-            upload_pdf_ui()
-        elif st.session_state.stage == "questions":
-            questions_ui()
-        elif st.session_state.stage == "analysis":
-            analysis_ui()
-        elif st.session_state.stage == "budget_workforce":
-            budget_workforce_ui()
-        elif st.session_state.stage == "analyze_plan":
-            analyze_plan_ui()
-
-    elif selected == "Plan Generation":
-        if st.session_state.stage == "plan":
-            plan_generation_ui()
-        elif st.session_state.stage == "new_business_plan":
-            new_business_plan_ui()
-
-    elif selected == "Scenario Planning":
-        scenario_planning_ui()
-
-def market_research_ui():
-    st.title("Advanced Market Research")
-    
-    col1, col2 = st.columns(2)
-    with col1:
+    # Market Research Stage
+    elif st.session_state.stage == "market_research":
+        st.subheader("Advanced Market Research")
         query = st.text_area("Enter your market research query:")
         aim = st.text_area("AIM FOR RESEARCH:")
-    with col2:
         industry = st.text_input("Research Scope (Industry):")
         regions = st.text_input("Geographic Regions:")
 
-    if st.button("Conduct Advanced Research", key="conduct_research"):
-        if query and aim and industry:
-            with st.spinner("Conducting comprehensive market research..."):
-                try:
-                    research_result = generate_market_research(query, aim, industry, regions)
-                    st.success("Research completed successfully!")
-                    
-                    with st.expander("View Market Research Results", expanded=True):
+        if st.button("Conduct Advanced Research"):
+            if query and aim and industry:
+                with st.spinner("Conducting comprehensive market research..."):
+                    try:
+                        research_result = generate_market_research(query, aim, industry, regions)
+                        st.session_state.show_market_research_qa = True
+                        st.subheader("Market Research Results")
                         st.write(research_result)
-                    
-                    if st.download_button("Download Research Report", research_result, "market_research_report.txt"):
-                        st.success("Report downloaded successfully!")
-                    
-                    display_follow_up_questions("market_research")
-                except Exception as e:
-                    st.error(f"An error occurred during market research: {str(e)}")
-        else:
-            st.warning("Please provide a query, aim, and industry.")
-
-def upload_pdf_ui():
-    st.subheader("Upload PDF Documents")
-    pdf_docs = st.file_uploader("Upload your PDF Files", accept_multiple_files=True)
-
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("Process PDFs"):
-            if pdf_docs:
-                with st.spinner("Processing PDFs..."):
-                    st.session_state.pdf_docs = pdf_docs
-                    raw_text = get_pdf_text(pdf_docs)
-                    text_chunks = get_text_chunks(raw_text)
-                    get_vector_store(text_chunks)
-                    if st.session_state.action == "Analyze Existing Business":
-                        st.session_state.stage = "questions"
-                    else:
-                        st.session_state.stage = "analyze_plan"
-                    st.success("PDFs processed successfully!")
-                    st.rerun()
+                        st.session_state.market_research_result = research_result
+                        view_full_plan(research_result, "Market Research Report")
+                    except Exception as e:
+                        st.error(f"An error occurred during market research: {str(e)}")
             else:
-                st.warning("Please upload PDF files before processing.")
-    with col2:
+                st.warning("Please provide a query, aim, and industry.")
+
+        if st.session_state.get('show_market_research_qa', False):
+            display_follow_up_questions("market_research")
         if st.button("Back"):
             go_back()
 
-def questions_ui():
-    st.subheader("Initial Questions")
-    st.session_state.answers = ask_initial_questions()
-    if len(st.session_state.answers) == 4:
-        st.session_state.stage = "analysis"
-        st.rerun()
-    if st.button("Back"):
-        go_back()
-
-def analysis_ui():
-    st.subheader("Comprehensive Company Analysis")
-
-    if not st.session_state.get('pdf_docs'):
-        st.error("No answers found. Please complete the questionnaire before proceeding.")
-        st.session_state.stage = "questions"
-        st.rerun()
-
-    if 'analysis_complete' not in st.session_state:
-        with st.spinner("Analyzing your responses and the detailed PDF document..."):
-            try:
-                pdf_content = get_pdf_text(st.session_state.pdf_docs)
-                st.session_state.analysis = analyze_answers_and_documents(st.session_state.answers, pdf_content)
-                st.session_state.analysis_complete = True
-            except Exception as e:
-                st.error(f"An error occurred during analysis: {str(e)}")
-                st.session_state.stage = "questions"
-                st.rerun()
-
-    if st.session_state.get('analysis_complete', False):
-        st.write(st.session_state.analysis)
-        view_full_plan(st.session_state.analysis, "Business Analysis")
-
-        if st.button("Export Analysis to PDF"):
-            pdf = export_to_pdf(st.session_state.analysis, "Comprehensive Company Analysis")
-            st.download_button(label="Download Analysis PDF", data=pdf, file_name="company_analysis.pdf", mime="application/pdf")
-
-        display_follow_up_questions("analysis")
+    # Upload PDF stage
+    elif st.session_state.stage == "upload_pdf":
+        st.subheader("Upload PDF Documents")
+        pdf_docs = st.file_uploader("Upload your PDF Files", accept_multiple_files=True)
 
         col1, col2 = st.columns(2)
         with col1:
-            if st.button("Proceed to Budget and Workforce"):
-                st.session_state.stage = "budget_workforce"
-                st.rerun()
+            if st.button("Process PDFs"):
+                if pdf_docs:
+                    with st.spinner("Processing PDFs..."):
+                        st.session_state.pdf_docs = pdf_docs
+                        raw_text = get_pdf_text(pdf_docs)
+                        text_chunks = get_text_chunks(raw_text)
+                        get_vector_store(text_chunks)
+                        if st.session_state.action == "Analyze Existing Business":
+                            st.session_state.stage = "questions"
+                        else:
+                            st.session_state.stage = "analyze_plan"
+                        st.success("PDFs processed successfully!")
+                        st.rerun()
+                else:
+                    st.warning("Please upload PDF files before processing.")
         with col2:
             if st.button("Back"):
                 go_back()
 
-def budget_workforce_ui():
-    st.subheader("Budget and Workforce (Optional)")
-    col1, col2 = st.columns(2)
-    with col1:
-        budget = st.number_input("What is your budget to meet the goal? (optional)", min_value=0, value=None)
-    with col2:
-        workforce = st.number_input("How many key stakeholders are in your workforce? (optional)", min_value=0, value=None)
-
-    col3, col4, col5 = st.columns(3)
-    with col3:
-        if st.button("Generate Plan"):
-            st.session_state.stage = "plan"
-            st.session_state.budget = budget
-            st.session_state.workforce = workforce
+    # Initial Questions stage
+    elif st.session_state.stage == "questions":
+        st.subheader("Initial Questions")
+        st.session_state.answers = ask_initial_questions()
+        if len(st.session_state.answers) == 4:
+            st.session_state.stage = "analysis"
             st.rerun()
-    with col4:
-        if st.button("Skip and Generate Plan"):
-            st.session_state.stage = "plan"
-            st.session_state.budget = None
-            st.session_state.workforce = None
-            st.rerun()
-    with col5:
         if st.button("Back"):
             go_back()
 
-def analyze_plan_ui():
-    st.subheader("Business Plan Analysis and Improvement Strategy")
-    st.write("Please upload a PDF of your business plan.")
+    # Comprehensive Company Analysis
+    elif st.session_state.stage == "analysis":
+        st.subheader("Comprehensive Company Analysis")
 
-    if "analyzed_plan" not in st.session_state:
-        with st.spinner("Analyzing the uploaded business plan and identifying areas for improvement..."):
-            try:
-                pdf_content = get_pdf_text(st.session_state.pdf_docs)
-                analysis = analyze_uploaded_plan(pdf_content)
+        if not st.session_state.get('pdf_docs'):
+            st.error("No answers found. Please complete the questionnaire before proceeding.")
+            st.session_state.stage = "questions"
+            st.rerun()
 
-                if "This document does not appear to be a business plan" in analysis:
-                    st.error("The uploaded document doesn't match the expected structure of a business plan.")
+        if 'analysis_complete' not in st.session_state:
+            with st.spinner("Analyzing your responses and the detailed PDF document..."):
+                try:
+                    pdf_content = get_pdf_text(st.session_state.pdf_docs)
+                    st.session_state.analysis = analyze_answers_and_documents(st.session_state.answers, pdf_content)
+                    st.session_state.analysis_complete = True
+                except Exception as e:
+                    st.error(f"An error occurred during analysis: {str(e)}")
+                    st.session_state.stage = "questions"
+                    st.rerun()
+
+        if st.session_state.get('analysis_complete', False):
+            st.write(st.session_state.analysis)
+            view_full_plan(st.session_state.analysis, "Business Analysis")
+
+            if st.button("Export Analysis to PDF"):
+                pdf = export_to_pdf(st.session_state.analysis, "Comprehensive Company Analysis")
+                st.download_button(label="Download Analysis PDF", data=pdf, file_name="company_analysis.pdf", mime="application/pdf")
+
+            display_follow_up_questions("analysis")
+
+            col1, col2 = st.columns(2)
+            with col1:
+                if st.button("Proceed to Budget and Workforce"):
+                    st.session_state.stage = "budget_workforce"
+                    st.rerun()
+            with col2:
+                if st.button("Back"):
+                    go_back()
+
+    # Budget and Workforce (Optional)
+    elif st.session_state.stage == "budget_workforce":
+        st.subheader("Budget and Workforce (Optional)")
+        col1, col2 = st.columns(2)
+        with col1:
+            budget = st.number_input("What is your budget to meet the goal? (optional)", min_value=0, value=None)
+        with col2:
+            workforce = st.number_input("How many key stakeholders are in your workforce? (optional)", min_value=0, value=None)
+
+        col3, col4, col5 = st.columns(3)
+        with col3:
+            if st.button("Generate Plan"):
+                st.session_state.stage = "plan"
+                st.session_state.budget = budget
+                st.session_state.workforce = workforce
+                st.rerun()
+        with col4:
+            if st.button("Skip and Generate Plan"):
+                st.session_state.stage = "plan"
+                st.session_state.budget = None
+                st.session_state.workforce = None
+                st.rerun()
+        with col5:
+            if st.button("Back"):
+                go_back()
+
+    # Generate Plan
+    elif st.session_state.stage == "plan":
+        st.subheader("Strategic Planning and Solutions")
+        if "plan" not in st.session_state or not st.session_state.plan:
+            with st.spinner("Generating comprehensive plan and solutions..."):
+                try:
+                    st.session_state.plan = provide_planning_and_solutions(
+                        st.session_state.analysis,
+                        st.session_state.budget,
+                        st.session_state.workforce
+                    )
+                except Exception as e:
+                    st.error(f"An error occurred while generating the plan: {str(e)}")
+
+        if st.session_state.plan:
+            st.write(st.session_state.plan)
+
+            if st.button("Export Strategic Plan to PDF"):
+                pdf = export_to_pdf(st.session_state.plan, "Strategic Plan")
+                st.download_button(label="Download Strategic Plan PDF", data=pdf, file_name="strategic_plan.pdf", mime="application/pdf")
+
+            display_follow_up_questions("strategic_plan")
+
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                if st.button("Generate Scenario Forecasts and Alternative Plans"):
+                    st.session_state.stage = "scenario_planning"
+                    st.rerun()
+            with col2:
+                if st.button("Back"):
+                    go_back()
+            with col3:
+                if st.button("Start New Analysis"):
+                    for key in list(st.session_state.keys()):
+                        del st.session_state[key]
+                    st.session_state.stage = "choose_action"
+                    st.rerun()
+
+    # Analyze Plan
+    elif st.session_state.stage == "analyze_plan":
+        st.subheader("Business Plan Analysis and Improvement Strategy")
+        st.write("Please upload a PDF of your business plan.")
+
+        if "analyzed_plan" not in st.session_state:
+            with st.spinner("Analyzing the uploaded business plan and identifying areas for improvement..."):
+                try:
+                    pdf_content = get_pdf_text(st.session_state.pdf_docs)
+                    analysis = analyze_uploaded_plan(pdf_content)
+
+                    if "This document does not appear to be a business plan" in analysis:
+                        st.error("The uploaded document doesn't match the expected structure of a business plan.")
+                        st.session_state.stage = "upload_pdf"
+                        st.rerun()
+
+                    st.session_state.analyzed_plan = analysis
+                    st.write(analysis)
+
+                    st.subheader("Key Areas for Improvement")
+                    improvement_areas = generate_chatgpt_response(f"Based on the following analysis, list the top 5 most critical areas for improvement in bullet points:\n\n{analysis}")
+                    st.session_state.improvement_areas = improvement_areas
+                    st.write(improvement_areas)
+
+                    st.subheader("Implementation Strategy")
+                    implementation_strategy = generate_chatgpt_response(f"Based on the analysis and areas for improvement, provide a concise, step-by-step implementation strategy:\n\n{analysis}\n\n{improvement_areas}")
+                    st.session_state.implementation_strategy = implementation_strategy
+                    st.write(implementation_strategy)
+
+                except Exception as e:
+                    st.error(f"An error occurred during business plan analysis: {str(e)}")
                     st.session_state.stage = "upload_pdf"
                     st.rerun()
 
-                st.session_state.analyzed_plan = analysis
-                st.write(analysis)
+        else:
+            st.write(st.session_state.analyzed_plan)
 
-                st.subheader("Key Areas for Improvement")
-                improvement_areas = generate_chatgpt_response(f"Based on the following analysis, list the top 5 most critical areas for improvement in bullet points:\n\n{analysis}")
-                st.session_state.improvement_areas = improvement_areas
-                st.write(improvement_areas)
+            # Display the previously generated improvement areas and implementation strategy
+            st.subheader("Key Areas for Improvement")
+            st.write(st.session_state.improvement_areas)
 
-                st.subheader("Implementation Strategy")
-                implementation_strategy = generate_chatgpt_response(f"Based on the analysis and areas for improvement, provide a concise, step-by-step implementation strategy:\n\n{analysis}\n\n{improvement_areas}")
-                st.session_state.implementation_strategy = implementation_strategy
-                st.write(implementation_strategy)
+            st.subheader("Implementation Strategy")
+            st.write(st.session_state.implementation_strategy)
 
-            except Exception as e:
-                st.error(f"An error occurred during business plan analysis: {str(e)}")
-                st.session_state.stage = "upload_pdf"
-                st.rerun()
+        # Add PDF export option
+        if st.button("Export Business Plan Analysis to PDF"):
+            content = f"Business Plan Analysis:\n\n{st.session_state.analyzed_plan}\n\n"
+            content += f"Key Areas for Improvement:\n\n{st.session_state.improvement_areas}\n\n"
+            content += f"Implementation Strategy:\n\n{st.session_state.implementation_strategy}"
+            pdf = export_to_pdf(content, "Business Plan Analysis")
+            st.download_button(label="Download Analysis PDF", data=pdf, file_name="business_plan_analysis.pdf", mime="application/pdf")
 
-    else:
-        st.write(st.session_state.analyzed_plan)
-
-        st.subheader("Key Areas for Improvement")
-        st.write(st.session_state.improvement_areas)
-
-        st.subheader("Implementation Strategy")
-        st.write(st.session_state.implementation_strategy)
-
-    if st.button("Export Business Plan Analysis to PDF"):
-        content = f"Business Plan Analysis:\n\n{st.session_state.analyzed_plan}\n\n"
-        content += f"Key Areas for Improvement:\n\n{st.session_state.improvement_areas}\n\n"
-        content += f"Implementation Strategy:\n\n{st.session_state.implementation_strategy}"
-        pdf = export_to_pdf(content, "Business Plan Analysis")
-        st.download_button(label="Download Analysis PDF", data=pdf, file_name="business_plan_analysis.pdf", mime="application/pdf")
-
-    display_follow_up_questions("analyzed_plan")
-
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        if st.button("Refine Analysis"):
-            del st.session_state.analyzed_plan
-            del st.session_state.improvement_areas
-            del st.session_state.implementation_strategy
-            st.rerun()
-    with col2:
-        if st.button("Back"):
-            go_back()
-    with col3:
-        if st.button("Start New Analysis"):
-            for key in list(st.session_state.keys()):
-                del st.session_state[key]
-            st.session_state.stage = "choose_action"
-            st.rerun()
-
-def plan_generation_ui():
-    st.subheader("Strategic Planning and Solutions")
-    if "plan" not in st.session_state or not st.session_state.plan:
-        with st.spinner("Generating comprehensive plan and solutions..."):
-            try:
-                st.session_state.plan = provide_planning_and_solutions(
-                    st.session_state.analysis,
-                    st.session_state.budget,
-                    st.session_state.workforce
-                )
-            except Exception as e:
-                st.error(f"An error occurred while generating the plan: {str(e)}")
-
-    if st.session_state.plan:
-        st.write(st.session_state.plan)
-
-        if st.button("Export Strategic Plan to PDF"):
-            pdf = export_to_pdf(st.session_state.plan, "Strategic Plan")
-            st.download_button(label="Download Strategic Plan PDF", data=pdf, file_name="strategic_plan.pdf", mime="application/pdf")
-
-        display_follow_up_questions("strategic_plan")
+        # Interactive Q&A for Analyzed Plan
+        display_follow_up_questions("analyzed_plan")
 
         col1, col2, col3 = st.columns(3)
         with col1:
-            if st.button("Generate Scenario Forecasts and Alternative Plans"):
-                st.session_state.stage = "scenario_planning"
+            if st.button("Refine Analysis"):
+                del st.session_state.analyzed_plan
+                del st.session_state.improvement_areas
+                del st.session_state.implementation_strategy
                 st.rerun()
         with col2:
             if st.button("Back"):
@@ -1745,11 +1613,10 @@ def plan_generation_ui():
                 st.session_state.stage = "choose_action"
                 st.rerun()
 
-def new_business_plan_ui():
-    st.subheader("Generate New Business Plan")
+    # Generate New Business Plan
+    elif st.session_state.stage == "new_business_plan":
+        st.subheader("Generate New Business Plan")
 
-    col1, col2 = st.columns(2)
-    with col1:
         business_idea = st.text_area("1. What is your business idea?")
         business_type = st.radio("2. Business type:", ["Product", "Service"])
         selected_country, selected_currency = st.selectbox(
@@ -1757,130 +1624,128 @@ def new_business_plan_ui():
             options=countries_with_currencies,
             format_func=lambda x: x[0]
         )
-        city = st.text_input("4. Enter the city of your business:")
-    with col2:
+        city = st.text_input("4. Enter Target city for your business:")
+        location = f"{city}, {selected_country}"
+
         industries = st.multiselect(
             "5. In which industry(ies) do you identify yourself? (Select up to 2)",
             options=["Technology", "Healthcare", "Finance", "Education", "Retail", "Manufacturing", "Other"],
             max_selections=2
         )
+
         st.write("6. Target market:")
-        demographics = st.multiselect("A. Demographics", ["Male", "Female", "Others", "Both", "All"])
-        age_categories = st.multiselect("B. Age Categories", ["0-3", "3-10", "10-14", "14-18", "18-35", "35-60", "60+"])
+        demographics = st.multiselect("A. Demographics", ["Male", "Female", "Others", "All"])
+        age_categories = st.multiselect("B. Age Categories", ["0-10", "10-18", "18-35", "35-60", "60+"])
         income_group = st.multiselect("C. Income group", ["Lower", "Lower-middle", "Middle-upper", "Upper"])
 
-    col3, col4 = st.columns(2)
-    with col3:
         product_positioning = st.radio("7. How would you describe your product positioning?", ["Mass Product", "Seasonal Product", "Premium Product"])
         usp = st.text_area("8. Describe key values and features of your product - USP:")
-        geographical_target = st.text_input("9. Geographical region you want to target:")
-    with col4:
-        initial_investment = st.number_input(f"10. Initial investment ({selected_currency}):", min_value=0, value=0)
-        target_market_share = st.number_input("11. Target market share (%) to achieve in 3 years:", min_value=0.0, max_value=100.0, value=1.0, step=0.1)
-        projected_revenue = st.number_input(f"12. Projected annual revenue after 3 years ({selected_currency}):", min_value=0)
-        founders_experience = st.text_area("13. Experience of founders:")
+        initial_investment = st.number_input(f"9. Initial investment ({selected_currency}):", min_value=0, value=0)
+        target_market_share = st.number_input("10. Target market share (%) to achieve in 3 years:", min_value=0.0, max_value=100.0, value=1.0, step=0.1)
+        founders_experience = st.text_area("11. Experience of founders:")
 
-    if st.button("Generate Business Plan"):
-        with st.spinner("Generating your business plan..."):
-            try:
-                business_plan = generate_new_business_plan(
-                    business_idea=business_idea,
-                    business_type=business_type,
-                    target_market={
-                        "demographics": demographics,
-                        "age_categories": age_categories,
-                        "income_group": income_group
-                    },
-                    initial_investment=initial_investment,
-                    industry=", ".join(industries),
-                    location=f"{city}, {selected_country}",
-                    product_positioning=product_positioning,
-                    usp=usp,
-                    geographical_target=geographical_target,
-                    target_market_share=target_market_share,
-                    projected_revenue=projected_revenue,
-                    founders_experience=founders_experience,
-                    currency=selected_currency
-                )
-                st.session_state.new_business_plan = business_plan
-                st.write(business_plan)
-                view_full_plan(st.session_state.new_business_plan, "Business Plan")
-            except Exception as e:
-                st.error(f"An error occurred while generating the business plan: {str(e)}")
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("Generate Business Plan"):
+                with st.spinner("Generating your business plan..."):
+                    try:
+                        business_plan = generate_new_business_plan(
+                            business_idea=business_idea,
+                            business_type=business_type,
+                            target_market={
+                                "demographics": demographics,
+                                "age_categories": age_categories,
+                                "income_group": income_group
+                            },
+                            initial_investment=initial_investment,
+                            industry=", ".join(industries),
+                            location=location,
+                            product_positioning=product_positioning,
+                            usp=usp,
+                            target_market_share=target_market_share,
+                            founders_experience=founders_experience,
+                            currency=selected_currency
+                        )
+                        st.session_state.new_business_plan = business_plan
+                        st.write(business_plan)
+                        view_full_plan(st.session_state.new_business_plan, "Business Plan")
+                    except Exception as e:
+                        st.error(f"An error occurred while generating the business plan: {str(e)}")
+            else:
+                st.write(st.session_state.new_business_plan)
 
-    if st.button("Export New Business Plan to PDF"):
-        pdf = export_to_pdf(st.session_state.new_business_plan, "New Business Plan")
-        st.download_button(
-            label="Download Business Plan PDF",
-            data=pdf,
-            file_name="new_business_plan.pdf",
-            mime="application/pdf"
-        )
-
-    if st.button("Proceed to Interactive Q&A"):
-        st.session_state.show_qa = True
-
-    if st.session_state.get('show_qa', False):
-        display_follow_up_questions("new_business_plan")
-
-    if st.button("Back"):
-        go_back()
-
-def scenario_planning_ui():
-    st.subheader("AI-Powered Scenario Planning")
-
-    if "forecasts" not in st.session_state:
-        with st.spinner("Generating scenario forecasts..."):
-            st.session_state.forecasts = generate_scenario_forecasts(st.session_state.analysis, st.session_state.plan)
-
-    st.write("Scenario Forecasts:")
-    st.write(st.session_state.forecasts)
-
-    if "alternative_plans" not in st.session_state:
-        with st.spinner("Generating alternative plans..."):
-            st.session_state.alternative_plans = generate_alternative_plans(
-                st.session_state.analysis,
-                st.session_state.plan,
-                st.session_state.forecasts
-            )
-
-    st.write("Alternative Strategic Plans:")
-    st.write(st.session_state.alternative_plans)
-
-    if st.button("Export Scenario Planning to PDF"):
-        content = f"Scenario Forecasts:\n\n{st.session_state.forecasts}\n\n"
-        content += f"Alternative Strategic Plans:\n\n{st.session_state.alternative_plans}"
-        pdf = export_to_pdf(content, "Scenario Planning Report")
-        st.download_button(
-            label="Download Scenario Planning PDF",
-            data=pdf,
-            file_name="scenario_planning_report.pdf",
-            mime="application/pdf"
-        )
-
-    display_follow_up_questions("scenario_forecasts")
-    display_follow_up_questions("alternative_plans")
-
-    col1, col2 = st.columns(2)
-    with col1:
         if st.button("Back"):
             go_back()
-    with col2:
+
+        # Add PDF export option
+        if st.button("Export New Business Plan to PDF"):
+            pdf = export_to_pdf(st.session_state.new_business_plan, "New Business Plan")
+            st.download_button(
+                label="Download Business Plan PDF",
+                data=pdf,
+                file_name="new_business_plan.pdf",
+                mime="application/pdf"
+            )
+
+        if st.button("Proceed to Interactive Q&A"):
+            st.session_state.show_qa = True
+
+        if st.session_state.get('show_qa', False):
+            display_follow_up_questions("new_business_plan")
+
         if st.button("Start New Analysis"):
             for key in list(st.session_state.keys()):
                 del st.session_state[key]
             st.session_state.stage = "choose_action"
             st.rerun()
 
-def go_back():
-    # Implement logic to go back to the previous stage
-    pass
+    # AI-Powered Scenario Planning
+    elif st.session_state.stage == "scenario_planning":
+        st.subheader("AI-Powered Scenario Planning")
 
-def view_full_plan(content: str, title: str):
-    with st.expander(f"View Full {title}", expanded=False):
-        st.write(content)
+        if "forecasts" not in st.session_state:
+            with st.spinner("Generating scenario forecasts..."):
+                st.session_state.forecasts = generate_scenario_forecasts(st.session_state.analysis, st.session_state.plan)
 
-# Add any missing utility functions here (e.g., generate_market_research, analyze_answers_and_documents, etc.)
+        st.write("Scenario Forecasts:")
+        st.write(st.session_state.forecasts)
 
+        if "alternative_plans" not in st.session_state:
+            with st.spinner("Generating alternative plans..."):
+                st.session_state.alternative_plans = generate_alternative_plans(
+                    st.session_state.analysis,
+                    st.session_state.plan,
+                    st.session_state.forecasts
+                )
+
+        st.write("Alternative Strategic Plans:")
+        st.write(st.session_state.alternative_plans)
+
+        # Add PDF export option
+        if st.button("Export Scenario Planning to PDF"):
+            content = f"Scenario Forecasts:\n\n{st.session_state.forecasts}\n\n"
+            content += f"Alternative Strategic Plans:\n\n{st.session_state.alternative_plans}"
+            pdf = export_to_pdf(content, "Scenario Planning Report")
+            st.download_button(
+                label="Download Scenario Planning PDF",
+                data=pdf,
+                file_name="scenario_planning_report.pdf",
+                mime="application/pdf"
+            )
+
+        display_follow_up_questions("scenario_forecasts")
+        display_follow_up_questions("alternative_plans")
+
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("Back"):
+                go_back()
+        with col2:
+            if st.button("Start New Analysis"):
+                for key in list(st.session_state.keys()):
+                    del st.session_state[key]
+                st.session_state.stage = "choose_action"
+                st.rerun()
+                
 if __name__ == "__main__":
     main()

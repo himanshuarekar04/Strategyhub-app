@@ -274,66 +274,19 @@ def analyze_answers_and_documents(answers, pdf_content):
     {pdf_content}
 
     Based on the above, provide an in-depth analysis covering the following aspects:
-    1. Mission/Goal Overview (from user input)
-    2. Financial Performance Analysis
-    3. Strategic Initiatives Analysis
-    4. Operational Efficiency Analysis
-    5. Market and Competitive Analysis
-    6. SWOT Analysis
-    7. PESTEL Analysis
-    8. Key Challenges (from both user input and PDF)
-    9. Progress Made (from user input)
-    10. Risk Management Analysis
-    11. Human Resources Analysis
-    12. Technology and IT Analysis
-    13. Customer Analysis
-    14. Environmental, Social, and Governance (ESG) Analysis
-    15. Brand and Marketing Analysis
-    16. Innovation and R&D Analysis
-    17. Detailed Competitive Analysis
-    18. Stakeholder Analysis
-    19. Detailed Action Plan
-    20. Financial Projections
-    21. Benchmarking and Best Practices
-    22. Change Management Plan
-    23. Regulatory and Compliance Analysis
-    24. Cultural Analysis
-    25. Supply Chain Analysis
-    26. Financial Health Indicators
-    27. Company Lifecycle
-    28. Individual Competitor Analysis
-    29. Digital Transformation Assessment
-    30. Innovation Pipeline Analysis
-    31. Talent Management and Succession Planning
-    32. Customer Journey Mapping
-    33. Data Analytics Capabilities
-    34. Sustainability and Corporate Social Responsibility (CSR) Initiatives
-    35. Intellectual Property Portfolio
-    36. Global Market Expansion Opportunities
-    37. Cybersecurity and Data Privacy Measures
-    38. Ecosystem and Partnership Analysis
-    39. Agility and Adaptability Assessment
-    40. Employee Engagement and Company Culture
-    41. Product/Service Portfolio Analysis
-    42. Pricing Strategy Assessment
-    43. Social Media and Online Presence Analysis
-    44. Merger and Acquisition (M&A) Opportunities
-    45. Regulatory Compliance Forecast
-    46. Customer Segmentation and Targeting
-    47. Supply Chain Resilience
-    48. Long-term Vision and Strategic Positioning
+    1. **Mission/Goal Alignment**: Are the company's stated mission and goals consistent with the analysis in the PDF?
+    2. **Financial Health**: Summarize the company's financial performance based on both user input and the PDF. Identify any discrepancies.
+    3. **Strategic Initiatives**: Evaluate the strategic initiatives. Are they clearly outlined and aligned with the company's goals?
+    4. **Operational Efficiency**: Analyze the company's operational efficiency. Highlight key metrics or areas of improvement.
+    5. **Market Position & Competitive Analysis**: How does the company compare to competitors? Include a SWOT and PESTEL analysis.
+    6. **Risk and Challenges**: Identify key challenges and risks faced by the company, drawing from both inputs.
+    7. **Progress Evaluation**: Evaluate the progress made by the company, using both the user input and the PDF as sources.
+    8. **Technology & Innovation**: Analyze the company's technological capabilities, innovation pipeline, and R&D efforts.
+    9. **Human Resources & Talent**: Assess the company's HR practices, talent management, and succession planning.
+    10. **Sustainability & ESG**: Provide insights into the company's sustainability practices and corporate social responsibility initiatives.
+    11. **Customer & Market Insights**: Analyze customer segmentation, customer journey mapping, and market opportunities.
 
-    Provide an analysis that integrates information from both the user's input and the given document. If the provided document lacks sufficient information, utilize web sources to supplement your analysis with relevant and accurate data. When using web sources:
-    - Clearly indicate which information comes from the web versus the original document.
-    - Use reputable and up-to-date sources.
-    - Cite the sources you use.
-
-    Provide a detailed but structured report which has an industry accepted format. 
-    For each point, provide:
-    Provide in-depth analysis, specific strategies, and implementation detail along with budget required and execution timeline.
-    Include relevant data points, examples, and mini case studies where appropriate either from competitors or businesses doing exceptionally well in that specific industry.
-    Explain the rationale behind each strategy and how it aligns with the overall business goals.
-    Break down complex ideas into digestible parts and use examples where appropriate to illustrate your points.
+    Highlight any discrepancies, gaps, or areas where the user input conflicts with the information in the PDF. Provide actionable insights or suggestions based on the comparison.
     """
     analysis = generate_chatgpt_response(analysis_prompt)
     return analysis
