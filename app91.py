@@ -100,7 +100,7 @@ def generate_unique_key(base_key):
 
 # Additional initialization code as needed
 if not firebase_admin._apps:
-    cred = credentials.Certificate("C:\\Users\\Lenovo\\Downloads\\New intern project\\intern\private_key.json")
+    cred = credentials.Certificate("C:\\Users\\Lenovo\\Downloads\\New intern project\\intern\\private_key.json")
     firebase_admin.initialize_app(cred)
 
 def set_bg(image_file):
